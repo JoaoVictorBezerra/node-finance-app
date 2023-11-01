@@ -1,3 +1,6 @@
 # Ignores files.
 
 node_modules
+
+.postgres
+.env
