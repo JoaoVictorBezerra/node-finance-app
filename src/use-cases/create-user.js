@@ -1,13 +1,23 @@
-import { PostgresCreateUserRepository } from '../repositories/implementations/postgres-create-user-repository';
+import { PostgresCreateUserRepository } from '../repositories/postgres/create-user.js';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
+import { FindUserByEmailRepository } from '../repositories/postgres/find-user-by-email.js';
 
 export class CreateUserUseCase {
   async execute(createUserParams) {
-    // TODO: Verificar se o e-mail já está em uso
+    const findUserByEmailRepository = new FindUserByEmailRepository();
+    findUserByEmailRepository.execute(createUserParams.email);
+
+    if (findUserByEmailRepository) {
+      return {
+        statusCode: 400,
+        body: {
+          error: 'E-mail already in use',
+        },
+      };
+    }
 
     const userId = uuidv4();
-
     const hashedPassword = await bcrypt.hash(createUserParams.password, 10);
 
     const user = {
