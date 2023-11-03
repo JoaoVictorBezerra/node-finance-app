@@ -6,9 +6,11 @@ import { FindUserByEmailRepository } from '../repositories/postgres/find-user-by
 export class CreateUserUseCase {
   async execute(createUserParams) {
     const findUserByEmailRepository = new FindUserByEmailRepository();
-    findUserByEmailRepository.execute(createUserParams.email);
+    const userAlreadyExists = await findUserByEmailRepository.execute(
+      createUserParams.email,
+    );
 
-    if (findUserByEmailRepository) {
+    if (userAlreadyExists) {
       return {
         statusCode: 400,
         body: {

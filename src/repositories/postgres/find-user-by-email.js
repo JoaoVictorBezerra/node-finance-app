@@ -6,7 +6,9 @@ export class FindUserByEmailRepository {
       'SELECT * FROM users WHERE email = $1',
       [email],
     );
-
-    return user[0];
+    if (user.length > 0) {
+      return true;
+    }
+    return false;
   }
 }
