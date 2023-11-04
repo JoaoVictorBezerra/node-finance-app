@@ -3,6 +3,7 @@ import 'dotenv/config.js';
 import { CreateUserController } from './src/controllers/create-user.js';
 import { GetUserByIdController } from './src/controllers/get-user-by-id.js';
 import { routes } from './src/constants/routes.js';
+import { UpdateUserController } from './src/controllers/update-user.js';
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,21 @@ app.post(routes.USER, async (request, response) => {
     const createUserController = new CreateUserController();
 
     const { statusCode, body } = await createUserController.execute(request);
+
+    response.status(statusCode).send(body);
+  } catch (error) {
+    console.error(error);
+    response.status(500).send({
+      message: 'Internal server error',
+    });
+  }
+});
+
+app.patch(`${routes.USER}/:userId`, async (request, response) => {
+  try {
+    const updateUserController = new UpdateUserController();
+
+    const { statusCode, body } = await updateUserController.execute(request);
 
     response.status(statusCode).send(body);
   } catch (error) {
