@@ -23,4 +23,10 @@ export const response = {
       body: body,
     };
   },
+  conflict: (body) => {
+    return {
+      statusCode: 409,
+      body: body,
+    };
+  },
 };
