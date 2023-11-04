@@ -1,6 +1,6 @@
 export const routes = {
   HOME: '/',
-  USER: 'api/user',
+  USER: '/api/user',
 };
 
 export default routes;

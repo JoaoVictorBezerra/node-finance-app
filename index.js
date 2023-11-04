@@ -2,34 +2,49 @@ import express from 'express';
 import 'dotenv/config.js';
 import { CreateUserController } from './src/controllers/create-user.js';
 import { GetUserByIdController } from './src/controllers/get-user-by-id.js';
+import { routes } from './src/constants/routes.js';
 
 const app = express();
 app.use(express.json());
 
-app.get('/', (req, res) =>
+app.get(routes.HOME, (req, res) =>
   res.send(
     JSON.stringify({
       status: 200,
-      message: 'working!',
+      message: 'Working!',
       timestamp: new Date(),
     }),
   ),
 );
 
-app.post('/api/user', async (request, response) => {
-  const createUserController = new CreateUserController();
+app.post(routes.USER, async (request, response) => {
+  try {
+    const createUserController = new CreateUserController();
 
-  const { statusCode, body } = await createUserController.execute(request);
+    const { statusCode, body } = await createUserController.execute(request);
 
-  response.status(statusCode).send(body);
+    response.status(statusCode).send(body);
+  } catch (error) {
+    console.error(error);
+    response.status(500).send({
+      message: 'Internal server error',
+    });
+  }
 });
 
-app.get('/api/user/:userId', async (request, response) => {
-  const getUserByIdController = new GetUserByIdController();
+app.get(`${routes.USER}/:userId`, async (request, response) => {
+  try {
+    const getUserByIdController = new GetUserByIdController();
 
-  const { statusCode, body } = await getUserByIdController.execute(request);
+    const { statusCode, body } = await getUserByIdController.execute(request);
 
-  response.status(statusCode).send(body);
+    response.status(statusCode).send(body);
+  } catch (error) {
+    console.error(error);
+    response.status(500).send({
+      message: 'Internal server error',
+    });
+  }
 });
 
 app.listen(3000, () => console.log('Listening on port 3000'));
