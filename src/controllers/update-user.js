@@ -1,8 +1,7 @@
-import { response } from './helpers.js';
 import validator from 'validator';
 import { UpdateUserUseCase } from '../use-cases/update-user.js';
 import { EmailAlreadyInUseError } from '../errors/user.js';
-
+import { response, error } from './helpers/index.js';
 export class UpdateUserController {
   async execute(httpRequest) {
     try {
@@ -10,9 +9,7 @@ export class UpdateUserController {
       const isAnValidUUID = validator.isUUID(userId, 4);
 
       if (!isAnValidUUID) {
-        return response.badRequest({
-          message: 'The provided user id is not valid.',
-        });
+        return error.userId();
       }
 
       const updateUserParams = httpRequest.body;
@@ -32,18 +29,14 @@ export class UpdateUserController {
       if (updateUserParams.password) {
         const isValidPassword = updateUserParams.password.length > 6;
         if (!isValidPassword) {
-          return response.badRequest({
-            message: 'Password must be at least 6 characters',
-          });
+          return error.poorPassword();
         }
       }
 
       if (updateUserParams.email) {
         const emailIsValid = validator.isEmail(updateUserParams.email);
         if (!emailIsValid) {
-          return response.badRequest({
-            message: 'Invalid email. Please provider an valid email',
-          });
+          return error.email();
         }
       }
 

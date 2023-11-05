@@ -1,5 +1,5 @@
 import { GetUserByIdUseCase } from '../use-cases/get-user-by-id.js';
-import { response } from './helpers.js';
+import { response, error } from './helpers/index.js';
 import validator from 'validator';
 
 export class GetUserByIdController {
@@ -8,9 +8,7 @@ export class GetUserByIdController {
       const isAnValidUUID = validator.isUUID(httpRequest.params.userId, 4);
 
       if (!isAnValidUUID) {
-        return response.badRequest({
-          message: 'The provided user id is not valid.',
-        });
+        return error.userId();
       }
 
       const getUserByIdUseCase = new GetUserByIdUseCase();

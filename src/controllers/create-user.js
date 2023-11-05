@@ -1,6 +1,6 @@
 import { CreateUserUseCase } from '../use-cases/create-user.js';
 import validator from 'validator';
-import { response } from './helpers.js';
+import { response, error } from './helpers/index.js';
 import { EmailAlreadyInUseError } from '../errors/user.js';
 
 export class CreateUserController {
@@ -10,16 +10,12 @@ export class CreateUserController {
 
       const isValidPassword = params.password.length > 6;
       if (!isValidPassword) {
-        return response.badRequest({
-          message: 'Password must be at least 6 characters',
-        });
+        return error.poorPassword();
       }
 
       const emailIsValid = validator.isEmail(params.email);
       if (!emailIsValid) {
-        return response.badRequest({
-          message: 'Invalid email. Please provider an valid email',
-        });
+        return error.email();
       }
 
       const requiredFields = ['first_name', 'last_name', 'email', 'password'];
@@ -34,7 +30,7 @@ export class CreateUserController {
 
       const createdUser = await createUserUseCase.execute(params);
 
-      return response.created({ createdUser });
+      return response.created(createdUser);
     } catch (error) {
       if (error instanceof EmailAlreadyInUseError) {
         return response.conflict({ message: error.message });
